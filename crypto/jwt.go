@@ -35,7 +35,7 @@ func NewJWTAuthHMACService(secret []byte) *JWTAuthHMACService {
 //
 // The following errors are returned by this function:
 // ErrSignJWTTokenFailure
-func (j *JWTAuthHMACService) GenerateToken(claims jwt.Claims, ctx context.Context) (string, error) {
+func (j *JWTAuthHMACService) GenerateToken(ctx context.Context, claims jwt.Claims) (string, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -55,7 +55,7 @@ func (j *JWTAuthHMACService) GenerateToken(claims jwt.Claims, ctx context.Contex
 //
 // The following errors are returned by this function:
 // ErrInvalidTokenSignatureAlgorithm, ErrParseJWTTokenFailure
-func (j *JWTAuthHMACService) VerifyToken(encodedToken string, ctx context.Context) (*jwt.Token, error) {
+func (j *JWTAuthHMACService) VerifyToken(ctx context.Context, encodedToken string) (*jwt.Token, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -102,7 +102,7 @@ func NewJWTAuthRSAService(publicKey *rsa.PublicKey, privateKey *rsa.PrivateKey) 
 //
 // The following errors are returned by this function:
 // ErrSignJWTTokenFailure
-func (j *JWTAuthRSAService) GenerateToken(claims jwt.Claims, ctx context.Context) (string, error) {
+func (j *JWTAuthRSAService) GenerateToken(ctx context.Context, claims jwt.Claims) (string, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -122,7 +122,7 @@ func (j *JWTAuthRSAService) GenerateToken(claims jwt.Claims, ctx context.Context
 //
 // The following errors are returned by this function:
 // ErrInvalidTokenSignatureAlgorithm, ErrParseJWTTokenFailure
-func (j *JWTAuthRSAService) VerifyToken(encodedToken string, ctx context.Context) (*jwt.Token, error) {
+func (j *JWTAuthRSAService) VerifyToken(ctx context.Context, encodedToken string) (*jwt.Token, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -169,7 +169,7 @@ func NewJWTAuthECDSAService(publicKey *ecdsa.PublicKey, privateKey *ecdsa.Privat
 //
 // The following errors are returned by this function:
 // ErrSignJWTTokenFailure
-func (j *JWTAuthECDSAService) GenerateToken(claims jwt.Claims, ctx context.Context) (string, error) {
+func (j *JWTAuthECDSAService) GenerateToken(ctx context.Context, claims jwt.Claims) (string, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -189,7 +189,7 @@ func (j *JWTAuthECDSAService) GenerateToken(claims jwt.Claims, ctx context.Conte
 //
 // The following errors are returned by this function:
 // ErrInvalidTokenSignatureAlgorithm, ErrParseJWTTokenFailure
-func (j *JWTAuthECDSAService) VerifyToken(encodedToken string, ctx context.Context) (*jwt.Token, error) {
+func (j *JWTAuthECDSAService) VerifyToken(ctx context.Context, encodedToken string) (*jwt.Token, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l

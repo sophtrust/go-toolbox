@@ -54,7 +54,7 @@ type JWTAuthOptions struct {
 		Secure bool
 
 		// HttpOnly restricts the cookie from being accessed by anything such as JavaScript.
-		HttpOnly bool
+		HTTPOnly bool
 	}
 
 	// EnableErrorCodeHeader indicates whether or not to set the custom X-*-Error-Code header if an error occurs.
@@ -225,7 +225,7 @@ func JWTAuth(options JWTAuthOptions) gin.HandlerFunc {
 		c.Set(tbcontext.KeyJWT, token)
 		if options.SaveToCookie {
 			c.SetCookie(options.Cookie.Name, tokenString, int(options.Cookie.MaxAge.Seconds()), options.Cookie.Path,
-				options.Cookie.Domain, options.Cookie.Secure, options.Cookie.HttpOnly)
+				options.Cookie.Domain, options.Cookie.Secure, options.Cookie.HTTPOnly)
 		}
 
 		c.Next()

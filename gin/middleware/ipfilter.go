@@ -45,7 +45,7 @@ type IPFilterOptions struct {
 	// This field must NOT be nil.
 	IPDBHandle *ip2location.DB
 
-	// IsBannedHandler is called to determine if the request from the IP address, country or domain, repsectively,
+	// IsBannedHandler is called to determine if the request from the IP address, country or domain, respectively,
 	// should be blocked. It should return true or false and any error that occurs while performing the check.
 	//
 	// A handler allows for the most flexible scenario in how to store and manage IP/country/domain blacklists
@@ -158,7 +158,7 @@ func IPFilter(options IPFilterOptions) gin.HandlerFunc {
 
 // LoadIPLocationDB loads the binary-formatted (BIN) IP location database file downloaded from
 // https://lite.ip2location.com/database/ip-country.
-func LoadIPLocationDB(path string, ctx context.Context) (*ip2location.DB, error) {
+func LoadIPLocationDB(ctx context.Context, path string) (*ip2location.DB, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l

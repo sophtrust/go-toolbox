@@ -26,7 +26,7 @@ var (
 // This function should output content to the HTTP writer in order to send a response to the caller when a panic
 // is encountered.
 //
-// The handler will receive the current gin context, the error information and the stack when the error occured.
+// The handler will receive the current gin context, the error information and the stack when the error occurred.
 type RecoveryHandler func(*gin.Context, error, string)
 
 // Recover is a middleware function for recovering from unexpected panics.

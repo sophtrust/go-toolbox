@@ -19,7 +19,7 @@ import (
 //
 // The following errors are returned by this function:
 // ErrDecodeFailure, ErrGenerateCipherFailure, ErrGenerateGCMFailure, ErrDecryptFailure
-func DecryptString(ciphertext, key string, ctx context.Context) (string, error) {
+func DecryptString(ctx context.Context, ciphertext, key string) (string, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -97,7 +97,7 @@ func DecryptString(ciphertext, key string, ctx context.Context) (string, error) 
 //
 // The following errors are returned by this function:
 // ErrGenerateRandomKeyFailure, ErrGenerateCipherFailure, ErrGenerateGCMFailure, ErrGenerateNonceFailure
-func EncryptString(plaintext, key string, ctx context.Context) (string, error) {
+func EncryptString(ctx context.Context, plaintext, key string) (string, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l

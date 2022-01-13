@@ -50,54 +50,54 @@ func NewClient(proxyConfig ProxyConfig) *Client {
 //
 // The following errors are returned by this function:
 // ErrCreateRequestFailure, ErrDoRequestFailure, ErrReadResponseFailure, ErrStatusCodeNotOK
-func (c *Client) Delete(url string, headers map[string]string, body []byte, ctx context.Context) (
+func (c *Client) Delete(ctx context.Context, url string, headers map[string]string, body []byte) (
 	*http.Response, []byte, error) {
-	return c.doRequest("DELETE", url, headers, body, ctx)
+	return c.doRequest(ctx, "DELETE", url, headers, body)
 }
 
 // Get performs a GET request for the given URL and returns the raw body byte array.
 //
 // The following errors are returned by this function:
 // ErrCreateRequestFailure, ErrDoRequestFailure, ErrReadResponseFailure, ErrStatusCodeNotOK
-func (c *Client) Get(url string, headers map[string]string, ctx context.Context) (
+func (c *Client) Get(ctx context.Context, url string, headers map[string]string) (
 	*http.Response, []byte, error) {
-	return c.doRequest("GET", url, headers, nil, ctx)
+	return c.doRequest(ctx, "GET", url, headers, nil)
 }
 
 // Options performs an OPTIONS request for the given URL and returns the raw body byte array.
 //
 // The following errors are returned by this function:
 // ErrCreateRequestFailure, ErrDoRequestFailure, ErrReadResponseFailure, ErrStatusCodeNotOK
-func (c *Client) Options(url string, headers map[string]string, ctx context.Context) (
+func (c *Client) Options(ctx context.Context, url string, headers map[string]string) (
 	*http.Response, []byte, error) {
-	return c.doRequest("OPTIONS", url, headers, nil, ctx)
+	return c.doRequest(ctx, "OPTIONS", url, headers, nil)
 }
 
 // Patch performs a PATCH request for the given URL and returns the raw body byte array.
 //
 // The following errors are returned by this function:
 // ErrCreateRequestFailure, ErrDoRequestFailure, ErrReadResponseFailure, ErrStatusCodeNotOK
-func (c *Client) Patch(url string, headers map[string]string, body []byte, ctx context.Context) (
+func (c *Client) Patch(ctx context.Context, url string, headers map[string]string, body []byte) (
 	*http.Response, []byte, error) {
-	return c.doRequest("PATCH", url, headers, body, ctx)
+	return c.doRequest(ctx, "PATCH", url, headers, body)
 }
 
 // Post performs a POST request for the given URL and returns the raw body byte array.
 //
 // The following errors are returned by this function:
 // ErrCreateRequestFailure, ErrDoRequestFailure, ErrReadResponseFailure, ErrStatusCodeNotOK
-func (c *Client) Post(url string, headers map[string]string, body []byte, ctx context.Context) (
+func (c *Client) Post(ctx context.Context, url string, headers map[string]string, body []byte) (
 	*http.Response, []byte, error) {
-	return c.doRequest("POST", url, headers, body, ctx)
+	return c.doRequest(ctx, "POST", url, headers, body)
 }
 
 // Put performs a PUT request for the given URL and returns the raw body byte array.
 //
 // The following errors are returned by this function:
 // ErrCreateRequestFailure, ErrDoRequestFailure, ErrReadResponseFailure, ErrStatusCodeNotOK
-func (c *Client) Put(url string, headers map[string]string, body []byte, ctx context.Context) (
+func (c *Client) Put(ctx context.Context, url string, headers map[string]string, body []byte) (
 	*http.Response, []byte, error) {
-	return c.doRequest("PUT", url, headers, body, ctx)
+	return c.doRequest(ctx, "PUT", url, headers, body)
 }
 
 // NewRequest creates a new HTTP request object using any configured proxy information.
@@ -106,7 +106,7 @@ func (c *Client) Put(url string, headers map[string]string, body []byte, ctx con
 //
 // The following errors are returned by this function:
 // ErrParseUrlFailure, ErrProxyFailure, ErrCreateRequestFailure
-func (c *Client) NewRequest(method, url string, body io.Reader, ctx context.Context) (
+func (c *Client) NewRequest(ctx context.Context, method, url string, body io.Reader) (
 	*http.Client, *http.Request, error) {
 
 	logger := log.Logger
@@ -116,15 +116,15 @@ func (c *Client) NewRequest(method, url string, body io.Reader, ctx context.Cont
 	logger = logger.With().Str("method", method).Str("url", url).Logger()
 
 	// parse the URL passed in
-	parsedUrl, err := neturl.Parse(url)
+	parsedURL, err := neturl.Parse(url)
 	if err != nil {
-		e := &ErrParseUrlFailure{URL: url, Err: err}
+		e := &ErrParseURLFailure{URL: url, Err: err}
 		logger.Error().Err(e.Err).Msg(e.Error())
 		return nil, nil, e
 	}
 
 	// get any proxy URL required by our HTTP configuration
-	proxyURL, err := c.getProxy(parsedUrl)
+	proxyURL, err := c.getProxy(parsedURL)
 	if err != nil {
 		e := &ErrProxyFailure{URL: url, Err: err}
 		logger.Error().Err(e.Err).Msg(e.Error())
@@ -191,7 +191,7 @@ func (c *Client) NewRequest(method, url string, body io.Reader, ctx context.Cont
 //
 // The following errors are returned by this function:
 // ErrCreateRequestFailure, ErrDoRequestFailure, ErrReadResponseFailure, ErrStatusCodeNotOK
-func (c *Client) doRequest(method string, url string, headers map[string]string, body []byte, ctx context.Context) (
+func (c *Client) doRequest(ctx context.Context, method string, url string, headers map[string]string, body []byte) (
 	*http.Response, []byte, error) {
 
 	logger := log.Logger
@@ -204,7 +204,7 @@ func (c *Client) doRequest(method string, url string, headers map[string]string,
 	if body == nil {
 		body = []byte{}
 	}
-	client, req, err := c.NewRequest(method, url, bytes.NewBuffer(body), ctx)
+	client, req, err := c.NewRequest(ctx, method, url, bytes.NewBuffer(body))
 	if err != nil {
 		e := &ErrCreateRequestFailure{Method: method, URL: url, Err: err}
 		logger.Error().Err(e.Err).Msg(e.Error())
@@ -226,14 +226,14 @@ func (c *Client) doRequest(method string, url string, headers map[string]string,
 		return nil, nil, err
 	}
 	logger.Debug().Msgf("HTTP Response: %+v", resp)
-	return c.parseResponse(resp, ctx)
+	return c.parseResponse(ctx, resp)
 }
 
 // parseResponse parses the response from the HTTP request and returns the raw byte body.
 //
 // The following errors are returned by this function:
 // ErrReadResponseFailure, ErrStatusCodeNotOK
-func (c *Client) parseResponse(resp *http.Response, ctx context.Context) (*http.Response, []byte, error) {
+func (c *Client) parseResponse(ctx context.Context, resp *http.Response) (*http.Response, []byte, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l

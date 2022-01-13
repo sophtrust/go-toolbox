@@ -16,7 +16,8 @@ type UniversalTranslator struct {
 	fallback    ut.Translator
 }
 
-// New returns a new UniversalTranslator instance set with the fallback locale and locales it should support.
+// NewUniversalTranslator returns a new UniversalTranslator instance set with the fallback locale and locales it
+// should support.
 func NewUniversalTranslator(fallback locales.Translator,
 	supportedLocales ...locales.Translator) *UniversalTranslator {
 
@@ -78,7 +79,7 @@ func (t *UniversalTranslator) GetFallback() ut.Translator {
 //
 // The following errors are returned by this function:
 // ErrExistingTranslator
-func (t *UniversalTranslator) AddTranslator(translator locales.Translator, override bool, ctx context.Context) error {
+func (t *UniversalTranslator) AddTranslator(ctx context.Context, translator locales.Translator, override bool) error {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l

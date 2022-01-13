@@ -15,7 +15,7 @@ func TestImportFile(t *testing.T) {
 	// load translations
 	en := en.New()
 	ut := i18n.NewUniversalTranslator(en, en)
-	if err := ut.Import("./examples/en.toml", ctx); err != nil {
+	if err := ut.Import(ctx, "./examples/en.toml"); err != nil {
 		t.Errorf("error while importing TOML file: %s", err.Error())
 	}
 
@@ -70,7 +70,7 @@ func TestExportFile(t *testing.T) {
 	}
 
 	// export messages
-	if err := ut.Export("./examples/out", ctx); err != nil {
+	if err := ut.Export(ctx, "./examples/out"); err != nil {
 		t.Errorf("failed to export translations: %s", err.Error())
 	}
 	t.Logf("exported translations to ./examples/out")

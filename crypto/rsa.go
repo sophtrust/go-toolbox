@@ -17,13 +17,13 @@ import (
 //
 // The following errors are returned by this function:
 // ErrExtractPublicKeyFailure
-func ParsePublicKeyFromCertificate(cert *x509.Certificate, ctx context.Context) (*rsa.PublicKey, error) {
+func ParsePublicKeyFromCertificate(ctx context.Context, cert *x509.Certificate) (*rsa.PublicKey, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
 	}
 
-	// validate paramaters
+	// validate parameters
 	if cert == nil {
 		e := &ErrExtractPublicKeyFailure{Err: errors.New("no certificate was provided")}
 		logger.Error().Err(e.Err).Msg(e.Error())
@@ -49,7 +49,7 @@ func ParsePublicKeyFromCertificate(cert *x509.Certificate, ctx context.Context) 
 //
 // The following errors are returned by this function:
 // ErrSignDataFailure
-func Sign(contents []byte, privateKey *rsa.PrivateKey, ctx context.Context) ([]byte, error) {
+func Sign(ctx context.Context, contents []byte, privateKey *rsa.PrivateKey) ([]byte, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -90,7 +90,7 @@ func Sign(contents []byte, privateKey *rsa.PrivateKey, ctx context.Context) ([]b
 //
 // The following errors are returned by this function:
 // ErrInvalidSignature
-func Verify(contents, signature []byte, publicKey *rsa.PublicKey, ctx context.Context) error {
+func Verify(ctx context.Context, contents, signature []byte, publicKey *rsa.PublicKey) error {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l

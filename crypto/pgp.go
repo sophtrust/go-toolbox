@@ -22,7 +22,7 @@ type PGPKeyPair struct {
 //
 // The following errors are returned by this function:
 // ErrGeneratePGPKeyFailure, ErrLockPGPKeyFailure, ErrPGPArmorKeyFailure
-func NewPGPKeyPair(name, email, keyType string, bits int, ctx context.Context) (*PGPKeyPair, error) {
+func NewPGPKeyPair(ctx context.Context, name, email, keyType string, bits int) (*PGPKeyPair, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -63,7 +63,7 @@ func NewPGPKeyPair(name, email, keyType string, bits int, ctx context.Context) (
 //
 // The following errors are returned by this function:
 // ErrLoadPGPKeyFailure, ErrUnlockPGPKeyFailure
-func NewPGPKeyPairFromArmor(armoredKey, passphrase string, ctx context.Context) (*PGPKeyPair, error) {
+func NewPGPKeyPairFromArmor(ctx context.Context, armoredKey, passphrase string) (*PGPKeyPair, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -111,7 +111,7 @@ func (kp *PGPKeyPair) ClearPrivateParams() {
 	}
 }
 
-// ArmoredPrivateKey returns the private key wrapped in PGP armor.
+// GetArmoredPrivateKey returns the private key wrapped in PGP armor.
 //
 // The following errors are returned by this function:
 // ErrGetPGPKeyFailure
@@ -129,7 +129,7 @@ func (kp *PGPKeyPair) GetArmoredPrivateKey(ctx context.Context) (string, error) 
 	return kp.armoredKey, nil
 }
 
-// ArmoredPublicKey returns the public key wrapped in PGP armor.
+// GetArmoredPublicKey returns the public key wrapped in PGP armor.
 //
 // The following errors are returned by this function:
 // ErrGetPGPKeyFailure

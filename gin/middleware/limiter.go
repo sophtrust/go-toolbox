@@ -14,10 +14,10 @@ import (
 )
 
 var (
-	// RateLimitRemainingHeader is the header in which to store remaining rate limit information.
+	// RedisRateLimitRemainingHeader is the header in which to store remaining rate limit information.
 	RedisRateLimitRemainingHeader = "X-Redis-Rate-Limiter-Remaining"
 
-	// RateLimitRetryAfterHeader is the header in which to store retry information.
+	// RedisRateLimitRetryAfterHeader is the header in which to store retry information.
 	RedisRateLimitRetryAfterHeader = "X-Redis-Rate-Limiter-Retry-After"
 )
 

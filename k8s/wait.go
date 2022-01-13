@@ -124,11 +124,11 @@ func (w *ConditionalWaiter) Run(ctx context.Context) {
 		// add all matching resources to the list and wait for them
 		for _, item := range obj.Items {
 			subWaitGroup.Add(1)
-			go w.waitForObject(item.GetName(), &subWaitGroup, ctx)
+			go w.waitForObject(ctx, item.GetName(), &subWaitGroup)
 		}
 	} else {
 		subWaitGroup.Add(1)
-		go w.waitForObject(objName, &subWaitGroup, ctx)
+		go w.waitForObject(ctx, objName, &subWaitGroup)
 	}
 	subWaitGroup.Wait()
 }
@@ -171,7 +171,7 @@ func (w *ConditionalWaiter) isConditionMet(obj *unstructured.Unstructured) (bool
 //
 // The following errors are possible with this function:
 // ErrResourceWaitFailure
-func (w *ConditionalWaiter) waitForObject(name string, wg *sync.WaitGroup, ctx context.Context) {
+func (w *ConditionalWaiter) waitForObject(ctx context.Context, name string, wg *sync.WaitGroup) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l

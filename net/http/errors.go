@@ -7,35 +7,35 @@ import (
 
 // Object error codes (2251-2500)
 const (
-	ErrParseUrlFailureCode      = 2251
+	ErrParseURLFailureCode      = 2251
 	ErrProxyFailureCode         = 2252
 	ErrCreateRequestFailureCode = 2253
 	ErrDoRequestFailureCode     = 2254
 	ErrReadResponseFailureCode  = 2255
 )
 
-// ErrParseUrlFailure occurs when there is an error parsing a URL.
-type ErrParseUrlFailure struct {
+// ErrParseURLFailure occurs when there is an error parsing a URL.
+type ErrParseURLFailure struct {
 	URL string
 	Err error
 }
 
 // InternalError returns the internal standard error object if there is one or nil if none is set.
-func (e *ErrParseUrlFailure) InternalError() error {
+func (e *ErrParseURLFailure) InternalError() error {
 	return e.Err
 }
 
 // Error returns the string version of the error.
-func (e *ErrParseUrlFailure) Error() string {
+func (e *ErrParseURLFailure) Error() string {
 	return fmt.Sprintf("failed to parse URL '%s': %s", e.URL, e.Err.Error())
 }
 
 // Code returns the corresponding error code.
-func (e *ErrParseUrlFailure) Code() int {
-	return ErrParseUrlFailureCode
+func (e *ErrParseURLFailure) Code() int {
+	return ErrParseURLFailureCode
 }
 
-// ErrorProxyFailure occurs when there is an error retrieving a proxy URL.
+// ErrProxyFailure occurs when there is an error retrieving a proxy URL.
 type ErrProxyFailure struct {
 	URL string
 	Err error

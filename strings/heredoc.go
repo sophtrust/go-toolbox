@@ -25,7 +25,7 @@ func HereDoc(raw string) string {
 	return strings.Join(lines, "\n")
 }
 
-// Docf returns unindented and formatted string as here-document.
+// HereDocf returns unindented and formatted string as here-document.
 // Formatting is done as for fmt.Printf().
 func HereDocf(raw string, args ...interface{}) string {
 	return fmt.Sprintf(HereDoc(raw), args...)
@@ -43,7 +43,7 @@ func getMinIndent(lines []string, skipFirstLine bool) int {
 		indentSize := 0
 		for _, r := range line {
 			if unicode.IsSpace(r) {
-				indentSize += 1
+				indentSize++
 			} else {
 				break
 			}

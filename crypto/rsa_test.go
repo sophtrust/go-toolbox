@@ -76,7 +76,7 @@ func TestParsePublicKeyFromCertificateFailure(t *testing.T) {
 
 	t.Log("*** testing nil certificate ***")
 	expected := "failed to extract public key from certificate: no certificate was provided"
-	_, err := crypto.ParsePublicKeyFromCertificate(nil, ctx)
+	_, err := crypto.ParsePublicKeyFromCertificate(ctx, nil)
 	if err == nil {
 		t.Errorf("error: got nil, expected %s", expected)
 	} else {
@@ -90,7 +90,7 @@ func TestParsePublicKeyFromCertificateFailure(t *testing.T) {
 
 	t.Log("*** testing invalid public key format ***")
 	expected = "failed to extract public key from certificate: public key does not appear to be in RSA format"
-	_, err = crypto.ParsePublicKeyFromCertificate(&x509.Certificate{}, ctx)
+	_, err = crypto.ParsePublicKeyFromCertificate(ctx, &x509.Certificate{})
 	if err == nil {
 		t.Errorf("error: got nil, expected %s", expected)
 	} else {
@@ -109,7 +109,7 @@ func TestSignFailure(t *testing.T) {
 
 	t.Log("*** testing nil contents ***")
 	expected := "failed to generate signature for data: no content was provided"
-	_, err := crypto.Sign(nil, nil, ctx)
+	_, err := crypto.Sign(ctx, nil, nil)
 	if err == nil {
 		t.Errorf("error: got nil, expected %s", expected)
 	} else {
@@ -123,7 +123,7 @@ func TestSignFailure(t *testing.T) {
 
 	t.Log("*** testing nil private key ***")
 	expected = "failed to generate signature for data: no private key was provided"
-	_, err = crypto.Sign([]byte(TestContents), nil, ctx)
+	_, err = crypto.Sign(ctx, []byte(TestContents), nil)
 	if err == nil {
 		t.Errorf("error: got nil, expected %s", expected)
 	} else {
@@ -142,7 +142,7 @@ func TestSignFailure(t *testing.T) {
 	}
 	privateKey.D = big.NewInt(1024)
 	privateKey.PublicKey.E = 12
-	_, err = crypto.Sign([]byte(TestContents), privateKey, ctx)
+	_, err = crypto.Sign(ctx, []byte(TestContents), privateKey)
 	if err == nil {
 		t.Errorf("error: got nil, expected error")
 	} else {
@@ -174,7 +174,7 @@ func TestSignVerifyFailure(t *testing.T) {
 	} else {
 		t.Log("  parsed PKCS1 public key from PEM block")
 	}
-	publicKey, err := crypto.ParsePublicKeyFromCertificate(cert, ctx)
+	publicKey, err := crypto.ParsePublicKeyFromCertificate(ctx, cert)
 	if err != nil {
 		t.Fatalf("error: certificate does not appear to be an RSA public key")
 	} else {
@@ -182,7 +182,7 @@ func TestSignVerifyFailure(t *testing.T) {
 	}
 
 	// sign the contents
-	signature, err := crypto.Sign([]byte(TestContents), privateKey, ctx)
+	signature, err := crypto.Sign(ctx, []byte(TestContents), privateKey)
 	if err != nil {
 		t.Fatalf("error: failed to generate signature: %s", err.Error())
 	} else {
@@ -190,7 +190,7 @@ func TestSignVerifyFailure(t *testing.T) {
 	}
 
 	// verify the signature
-	if err := crypto.Verify([]byte(TestContents), signature, publicKey, ctx); err == nil {
+	if err := crypto.Verify(ctx, []byte(TestContents), signature, publicKey); err == nil {
 		t.Fatalf("error: expected error, got nil")
 	}
 	t.Log("  signature verification failed as expected")
@@ -228,7 +228,7 @@ func TestSignVerifySuccess(t *testing.T) {
 	} else {
 		t.Log("  parsed PKCS1 public key from PEM block")
 	}
-	publicKey, err := crypto.ParsePublicKeyFromCertificate(cert, ctx)
+	publicKey, err := crypto.ParsePublicKeyFromCertificate(ctx, cert)
 	if err != nil {
 		t.Fatalf("error: certificate does not appear to be an RSA public key")
 	} else {
@@ -236,7 +236,7 @@ func TestSignVerifySuccess(t *testing.T) {
 	}
 
 	// sign the contents
-	signature, err := crypto.Sign([]byte(TestContents), key, ctx)
+	signature, err := crypto.Sign(ctx, []byte(TestContents), key)
 	if err != nil {
 		t.Fatalf("error: failed to generate signature: %s", err.Error())
 	} else {
@@ -244,7 +244,7 @@ func TestSignVerifySuccess(t *testing.T) {
 	}
 
 	// verify the signature
-	if err := crypto.Verify([]byte(TestContents), signature, publicKey, ctx); err != nil {
+	if err := crypto.Verify(ctx, []byte(TestContents), signature, publicKey); err != nil {
 		t.Fatalf("error: failed to verify signature: %s", err.Error())
 	}
 	t.Log("  signature is verified")
@@ -268,7 +268,7 @@ func TestVerifyFailure(t *testing.T) {
 	} else {
 		t.Log("  parsed PKCS1 public key from PEM block")
 	}
-	publicKey, err := crypto.ParsePublicKeyFromCertificate(cert, ctx)
+	publicKey, err := crypto.ParsePublicKeyFromCertificate(ctx, cert)
 	if err != nil {
 		t.Fatalf("error: certificate does not appear to be an RSA public key")
 	} else {
@@ -277,7 +277,7 @@ func TestVerifyFailure(t *testing.T) {
 
 	t.Log("*** testing nil contents ***")
 	expected := "the signature for the data is invalid: no content was provided"
-	if err := crypto.Verify(nil, nil, nil, ctx); err == nil {
+	if err := crypto.Verify(ctx, nil, nil, nil); err == nil {
 		t.Errorf("error: got nil, expected %s", expected)
 	} else {
 		errMsg := err.Error()
@@ -290,7 +290,7 @@ func TestVerifyFailure(t *testing.T) {
 
 	t.Log("*** testing nil signature ***")
 	expected = "the signature for the data is invalid: no signature was provided"
-	if err := crypto.Verify([]byte(TestContents), nil, nil, ctx); err == nil {
+	if err := crypto.Verify(ctx, []byte(TestContents), nil, nil); err == nil {
 		t.Errorf("error: got nil, expected %s", expected)
 	} else {
 		errMsg := err.Error()
@@ -303,7 +303,7 @@ func TestVerifyFailure(t *testing.T) {
 
 	t.Log("*** testing nil public key ***")
 	expected = "the signature for the data is invalid: no public key was provided"
-	if err := crypto.Verify([]byte(TestContents), []byte{}, nil, ctx); err == nil {
+	if err := crypto.Verify(ctx, []byte(TestContents), []byte{}, nil); err == nil {
 		t.Errorf("error: got nil, expected %s", expected)
 	} else {
 		errMsg := err.Error()
@@ -315,7 +315,7 @@ func TestVerifyFailure(t *testing.T) {
 	}
 
 	t.Log("*** testing invalid signature ***")
-	if err := crypto.Verify([]byte(TestContents), []byte{}, publicKey, ctx); err == nil {
+	if err := crypto.Verify(ctx, []byte(TestContents), []byte{}, publicKey); err == nil {
 		t.Errorf("error: got nil, expected error")
 	} else {
 		t.Logf("success - error was %s", err.Error())

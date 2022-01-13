@@ -10,12 +10,12 @@ import (
 func TestRandomEncrypt(t *testing.T) {
 	ctx := context.TODO()
 
-	ciphertext, err := crypto.EncryptString("test_string", "", ctx)
+	ciphertext, err := crypto.EncryptString(ctx, "test_string", "")
 	if err != nil {
 		t.Errorf("error while encrypting string: %s", err.Error())
 	}
 
-	plaintext, err := crypto.DecryptString(ciphertext, "", ctx)
+	plaintext, err := crypto.DecryptString(ctx, ciphertext, "")
 	if err != nil {
 		t.Errorf("error while decrypting string: %s", err.Error())
 	}
@@ -27,12 +27,12 @@ func TestRandomEncrypt(t *testing.T) {
 func TestEncrypt(t *testing.T) {
 	ctx := context.TODO()
 
-	ciphertext, err := crypto.EncryptString("test_string", "some_key", ctx)
+	ciphertext, err := crypto.EncryptString(ctx, "test_string", "some_key")
 	if err != nil {
 		t.Errorf("error while encrypting string: %s", err.Error())
 	}
 
-	plaintext, err := crypto.DecryptString(ciphertext, "some_key", ctx)
+	plaintext, err := crypto.DecryptString(ctx, ciphertext, "some_key")
 	if err != nil {
 		t.Errorf("error while decrypting string: %s", err.Error())
 	}

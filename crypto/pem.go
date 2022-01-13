@@ -71,7 +71,7 @@ var rfc1423Algos = []rfc1423Algo{{
 //
 // The following errors are returned by this function:
 // ErrReadFileFailure
-func DecodePEMBlockFromFile(file string, ctx context.Context) (*pem.Block, error) {
+func DecodePEMBlockFromFile(ctx context.Context, file string) (*pem.Block, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -104,7 +104,7 @@ func DecodePEMBlockFromFile(file string, ctx context.Context) (*pem.Block, error
 //
 // The following errors are returned by this function:
 // ErrDecryptFailure
-func DecryptPEMBlock(b *pem.Block, password []byte, ctx context.Context) ([]byte, error) {
+func DecryptPEMBlock(ctx context.Context, b *pem.Block, password []byte) ([]byte, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -206,7 +206,7 @@ func DecryptPEMBlock(b *pem.Block, password []byte, ctx context.Context) ([]byte
 //
 // The following errors are returned by this function:
 // ErrEncryptFailure, ErrGenerateIVFailure
-func EncryptPEMBlock(rand io.Reader, blockType string, data, password []byte, alg PEMCipher, ctx context.Context) (
+func EncryptPEMBlock(ctx context.Context, rand io.Reader, blockType string, data, password []byte, alg PEMCipher) (
 	*pem.Block, error) {
 
 	logger := log.Logger
@@ -271,7 +271,7 @@ func IsEncryptedPEMBlock(b *pem.Block) bool {
 //
 // The following errors are returned by this function:
 // ErrDecryptFailure, ErrDecodeFailure, ErrParseCertificateFailure
-func ParsePEMCertificateBytes(contents []byte, ctx context.Context) ([]*x509.Certificate, error) {
+func ParsePEMCertificateBytes(ctx context.Context, contents []byte) ([]*x509.Certificate, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -303,7 +303,7 @@ func ParsePEMCertificateBytes(contents []byte, ctx context.Context) ([]*x509.Cer
 //
 // The following errors are returned by this function:
 // ErrReadFileFailure, any error returned by ParsePEMCertificateBytes
-func ParsePEMCertificateFile(file string, ctx context.Context) ([]*x509.Certificate, error) {
+func ParsePEMCertificateFile(ctx context.Context, file string) ([]*x509.Certificate, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -316,7 +316,7 @@ func ParsePEMCertificateFile(file string, ctx context.Context) ([]*x509.Certific
 		logger.Error().Err(e.Err).Msg(err.Error())
 		return nil, e
 	}
-	return ParsePEMCertificateBytes(contents, ctx)
+	return ParsePEMCertificateBytes(ctx, contents)
 }
 
 // ParsePEMPrivateKeyBytes takes a PEM-formatted byte string and converts it into an RSA private key.
@@ -326,7 +326,7 @@ func ParsePEMCertificateFile(file string, ctx context.Context) ([]*x509.Certific
 //
 // The following errors are returned by this function:
 // ErrDecryptFailure, ErrDecodeFailure
-func ParsePEMPrivateKeyBytes(contents []byte, password []byte, ctx context.Context) (*rsa.PrivateKey, error) {
+func ParsePEMPrivateKeyBytes(ctx context.Context, contents []byte, password []byte) (*rsa.PrivateKey, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -353,7 +353,7 @@ func ParsePEMPrivateKeyBytes(contents []byte, password []byte, ctx context.Conte
 			logger.Error().Err(e.Err).Msg(e.Error())
 			return nil, e
 		}
-		decryptedBlock, err = DecryptPEMBlock(block, password, ctx)
+		decryptedBlock, err = DecryptPEMBlock(ctx, block, password)
 		if err != nil {
 			e := &ErrDecryptFailure{Err: err}
 			logger.Error().Err(e.Err).Msg(e.Error())
@@ -377,7 +377,7 @@ func ParsePEMPrivateKeyBytes(contents []byte, password []byte, ctx context.Conte
 //
 // The following errors are returned by this function:
 // ErrReadFileFailure, any error returned by ParsePEMPrivateKeyBytes
-func ParsePEMPrivateKeyFile(file string, password []byte, ctx context.Context) (*rsa.PrivateKey, error) {
+func ParsePEMPrivateKeyFile(ctx context.Context, file string, password []byte) (*rsa.PrivateKey, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -390,7 +390,7 @@ func ParsePEMPrivateKeyFile(file string, password []byte, ctx context.Context) (
 		logger.Error().Err(e.Err).Msg(e.Error())
 		return nil, e
 	}
-	return ParsePEMPrivateKeyBytes(contents, password, ctx)
+	return ParsePEMPrivateKeyBytes(ctx, contents, password)
 }
 
 // rfc1423Algo holds a method for enciphering a PEM block.

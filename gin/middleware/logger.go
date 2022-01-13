@@ -118,7 +118,7 @@ func (r ExcludeHTTPRequests) String() string {
 }
 
 // Set parses the given string value into the object.
-func (r ExcludeHTTPRequests) Set(str string) error {
+func (r *ExcludeHTTPRequests) Set(str string) error {
 	requests := strings.Split(str, ",")
 	newRequests := []ExcludeHTTPRequest{}
 	for _, req := range requests {
@@ -128,7 +128,7 @@ func (r ExcludeHTTPRequests) Set(str string) error {
 		}
 		newRequests = append(newRequests, request)
 	}
-	r = newRequests
+	*r = newRequests
 	return nil
 }
 

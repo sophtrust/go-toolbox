@@ -17,6 +17,7 @@ import (
 	"go.sophtrust.dev/pkg/zerolog/log"
 )
 
+// Types of translation rules.
 const (
 	RuleTypePlain    = "plain"
 	RuleTypeCardinal = "cardinal"
@@ -43,7 +44,7 @@ type translations map[string]*translation
 //
 // The following errors are returned by this function:
 // ErrExportPathFailure, ErrKeyIsNotString, ExportWriteFailure
-func (ut *UniversalTranslator) Export(path string, ctx context.Context) error {
+func (ut *UniversalTranslator) Export(ctx context.Context, path string) error {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -82,17 +83,15 @@ func (ut *UniversalTranslator) Export(path string, ctx context.Context) error {
 			trans[key].Locale = l
 			trans[key].Other = v.text
 		}
-		if err := ut.exportPlurals(trans, l, RuleTypeCardinal, locale.(*translator).cardinalTanslations,
-			ctx); err != nil {
+		if err := ut.exportPlurals(ctx, trans, l, RuleTypeCardinal,
+			locale.(*translator).cardinalTanslations); err != nil {
 
 			return err
 		}
-		if err := ut.exportPlurals(trans, l, RuleTypeOrdinal, locale.(*translator).ordinalTanslations,
-			ctx); err != nil {
-
+		if err := ut.exportPlurals(ctx, trans, l, RuleTypeOrdinal, locale.(*translator).ordinalTanslations); err != nil {
 			return err
 		}
-		if err := ut.exportPlurals(trans, l, RuleTypeRange, locale.(*translator).rangeTanslations, ctx); err != nil {
+		if err := ut.exportPlurals(ctx, trans, l, RuleTypeRange, locale.(*translator).rangeTanslations); err != nil {
 			return err
 		}
 
@@ -116,7 +115,7 @@ func (ut *UniversalTranslator) Export(path string, ctx context.Context) error {
 //
 // The following errors are returned by this function:
 // ErrImportPathFailure, any error from the ImportFromReader() function
-func (ut *UniversalTranslator) Import(path string, ctx context.Context) error {
+func (ut *UniversalTranslator) Import(ctx context.Context, path string) error {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -142,7 +141,7 @@ func (ut *UniversalTranslator) Import(path string, ctx context.Context) error {
 			return e
 		}
 		defer f.Close()
-		if err := ut.ImportFromReader(f, ctx); err != nil {
+		if err := ut.ImportFromReader(ctx, f); err != nil {
 			var e *ErrImportReadFailure
 			if errors.As(err, &e) {
 				e.Path = path
@@ -176,7 +175,7 @@ func (ut *UniversalTranslator) Import(path string, ctx context.Context) error {
 // The following errors are returned by this function:
 // ErrImportReadFailure, ErrLocaleNotRegistered, ErrInvalidRuleType, any error from the translator's Add(),
 // AddCardinal(), AddOrdinal() or AddRange() functions
-func (ut *UniversalTranslator) ImportFromReader(reader io.Reader, ctx context.Context) error {
+func (ut *UniversalTranslator) ImportFromReader(ctx context.Context, reader io.Reader) error {
 
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
@@ -261,8 +260,8 @@ func (ut *UniversalTranslator) ImportFromReader(reader io.Reader, ctx context.Co
 //
 // The following errors are returned by this function:
 // ErrKeyIsNotString
-func (ut *UniversalTranslator) exportPlurals(trans translations, locale, ruleType string,
-	plurals map[interface{}][]*transText, ctx context.Context) error {
+func (ut *UniversalTranslator) exportPlurals(ctx context.Context, trans translations, locale, ruleType string,
+	plurals map[interface{}][]*transText) error {
 
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {

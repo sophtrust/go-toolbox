@@ -27,7 +27,7 @@ type CertificatePool struct {
 //
 // The following errors are returned by this function:
 // ErrLoadCertificateFailure
-func NewCertificatePool(emptyPool bool, ctx context.Context) (*CertificatePool, error) {
+func NewCertificatePool(ctx context.Context, emptyPool bool) (*CertificatePool, error) {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -54,7 +54,7 @@ func NewCertificatePool(emptyPool bool, ctx context.Context) (*CertificatePool, 
 //
 // The following errors are returned by this function:
 // ErrLoadCertificateFailure
-func (p *CertificatePool) AddPEMCertificatesFromFile(file string, ctx context.Context) error {
+func (p *CertificatePool) AddPEMCertificatesFromFile(ctx context.Context, file string) error {
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
 		logger = *l
@@ -89,8 +89,8 @@ func (p *CertificatePool) AddPEMCertificatesFromFile(file string, ctx context.Co
 //
 // The following errors are returned by this function:
 // ErrInvalidCertificate
-func ValidateCertificate(cert *x509.Certificate, roots *CertificatePool, intermediates *CertificatePool,
-	keyUsages []x509.ExtKeyUsage, cn string, ctx context.Context) error {
+func ValidateCertificate(ctx context.Context, cert *x509.Certificate, roots *CertificatePool,
+	intermediates *CertificatePool, keyUsages []x509.ExtKeyUsage, cn string) error {
 
 	logger := log.Logger
 	if l := zerolog.Ctx(ctx); l != nil {
@@ -135,7 +135,7 @@ func ValidateCertificate(cert *x509.Certificate, roots *CertificatePool, interme
 //
 // The following errors are returned by this function:
 //
-func NewSelfSignedCertificateKeyPair(template *x509.Certificate, keyBits int, ctx context.Context) (
+func NewSelfSignedCertificateKeyPair(ctx context.Context, template *x509.Certificate, keyBits int) (
 	[]byte, []byte, error) {
 
 	logger := log.Logger
