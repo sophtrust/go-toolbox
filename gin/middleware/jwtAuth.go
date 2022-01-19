@@ -138,11 +138,7 @@ func JWTAuth(options JWTAuthOptions) gin.HandlerFunc {
 			err := errors.New("authentication token is missing from request")
 			setErrorHeaders(c, options, errorCode, err)
 			logger.Error().Err(err).Msg(err.Error())
-			if options.ErrorHandler == nil {
-				c.AbortWithStatus(http.StatusUnauthorized)
-			} else if options.ErrorHandler(c, errorCode, err) {
-				c.Next()
-			}
+			handleError(c, errorCode, err, options.ErrorHandler, http.StatusUnauthorized)
 			return
 		}
 		tokenString := authHeader[length:]
@@ -150,11 +146,7 @@ func JWTAuth(options JWTAuthOptions) gin.HandlerFunc {
 			errorCode := "jwt-no-auth-service-defined"
 			err := errors.New("no auth service for token verification was defined")
 			setErrorHeaders(c, options, errorCode, err)
-			if options.ErrorHandler == nil {
-				c.AbortWithStatus(http.StatusUnauthorized)
-			} else if options.ErrorHandler(c, errorCode, err) {
-				c.Next()
-			}
+			handleError(c, errorCode, err, options.ErrorHandler, http.StatusUnauthorized)
 			return
 		}
 		token, err := options.AuthService.VerifyToken(tokenString, ctx)
@@ -162,11 +154,7 @@ func JWTAuth(options JWTAuthOptions) gin.HandlerFunc {
 			errorCode := "jwt-verify-token-failed"
 			setErrorHeaders(c, options, errorCode, err)
 			logger.Error().Err(err).Msgf("failed to verify JWT token: %s", err.Error())
-			if options.ErrorHandler == nil {
-				c.AbortWithStatus(http.StatusUnauthorized)
-			} else if options.ErrorHandler(c, errorCode, err) {
-				c.Next()
-			}
+			handleError(c, errorCode, err, options.ErrorHandler, http.StatusUnauthorized)
 			return
 		}
 		if options.AuthnHandler != nil {
@@ -175,22 +163,14 @@ func JWTAuth(options JWTAuthOptions) gin.HandlerFunc {
 				errorCode := "jwt-authentication-failed"
 				setErrorHeaders(c, options, errorCode, err)
 				logger.Error().Err(err).Msgf("failed to authenticate JWT token: %s", err.Error())
-				if options.ErrorHandler == nil {
-					c.AbortWithStatus(http.StatusUnauthorized)
-				} else if options.ErrorHandler(c, errorCode, err) {
-					c.Next()
-				}
+				handleError(c, errorCode, err, options.ErrorHandler, http.StatusUnauthorized)
 				return
 			}
 			if !authenticated {
 				errorCode := "jwt-not-authenticated"
 				setErrorHeaders(c, options, errorCode, errors.New("JWT token is not authenticated"))
 				logger.Warn().Msg("JWT token is not authenticated")
-				if options.ErrorHandler == nil {
-					c.AbortWithStatus(http.StatusUnauthorized)
-				} else if options.ErrorHandler(c, errorCode, nil) {
-					c.Next()
-				}
+				handleError(c, errorCode, err, options.ErrorHandler, http.StatusUnauthorized)
 				return
 			}
 		}
@@ -200,6 +180,8 @@ func JWTAuth(options JWTAuthOptions) gin.HandlerFunc {
 				errorCode := "jwt-authorized-failed"
 				setErrorHeaders(c, options, errorCode, err)
 				logger.Error().Err(err).Msgf("failed to authorize JWT token: %s", err.Error())
+				handleError(c, errorCode, err, options.ErrorHandler, http.StatusForbidden)
+
 				if options.ErrorHandler == nil {
 					c.AbortWithStatus(http.StatusForbidden)
 				} else if options.ErrorHandler(c, errorCode, err) {
@@ -212,11 +194,7 @@ func JWTAuth(options JWTAuthOptions) gin.HandlerFunc {
 				setErrorHeaders(c, options, errorCode,
 					errors.New("JWT token is not authorized to perform the request"))
 				logger.Warn().Msg("JWT token is not authorized to perform the request")
-				if options.ErrorHandler == nil {
-					c.AbortWithStatus(http.StatusForbidden)
-				} else if options.ErrorHandler(c, errorCode, nil) {
-					c.Next()
-				}
+				handleError(c, errorCode, nil, options.ErrorHandler, http.StatusForbidden)
 				return
 			}
 		}
@@ -228,6 +206,15 @@ func JWTAuth(options JWTAuthOptions) gin.HandlerFunc {
 				options.Cookie.Domain, options.Cookie.Secure, options.Cookie.HTTPOnly)
 		}
 
+		c.Next()
+	}
+}
+
+// handleError either calls the specific error handler or aborts with the given status.
+func handleError(c *gin.Context, errorCode string, err error, errorHandler ErrorHandler, statusCode int) {
+	if errorHandler == nil {
+		c.AbortWithStatus(statusCode)
+	} else if errorHandler(c, errorCode, err) {
 		c.Next()
 	}
 }

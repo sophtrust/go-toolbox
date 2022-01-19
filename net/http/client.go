@@ -134,15 +134,7 @@ func (c *Client) NewRequest(ctx context.Context, method, url string, body io.Rea
 	// add proxy authorization if required
 	basicAuth := ""
 	if proxyURL != nil {
-		if proxyURL.Scheme == "http" &&
-			(c.proxyConfig.HTTPProxyUser != "" || c.proxyConfig.HTTPProxyPass != "") {
-			auth := fmt.Sprintf("%s:%s", c.proxyConfig.HTTPProxyUser, c.proxyConfig.HTTPProxyPass)
-			basicAuth = fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(auth)))
-		} else if proxyURL.Scheme == "https" &&
-			(c.proxyConfig.HTTPSProxyUser != "" || c.proxyConfig.HTTPSProxyPass != "") {
-			auth := fmt.Sprintf("%s:%s", c.proxyConfig.HTTPSProxyUser, c.proxyConfig.HTTPSProxyPass)
-			basicAuth = fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(auth)))
-		}
+		basicAuth = getProxyAuthorization(proxyURL, c.proxyConfig)
 	}
 
 	// configure HTTP transport object
@@ -227,6 +219,26 @@ func (c *Client) doRequest(ctx context.Context, method string, url string, heade
 	}
 	logger.Debug().Msgf("HTTP Response: %+v", resp)
 	return c.parseResponse(ctx, resp)
+}
+
+// getProxyAuthorization returns the Basic Authorization header text if proxy authorization is required.
+func getProxyAuthorization(proxyURL *neturl.URL, proxyConfig ProxyConfig) string {
+	// HTTPS URLs
+	if proxyURL.Scheme == "https" {
+		if proxyConfig.HTTPSProxyUser != "" && proxyConfig.HTTPSProxyPass != "" {
+			auth := fmt.Sprintf("%s:%s", proxyConfig.HTTPSProxyUser, proxyConfig.HTTPSProxyPass)
+			return fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(auth)))
+		}
+	}
+
+	// HTTP URLs
+	if proxyConfig.HTTPProxyUser != "" && proxyConfig.HTTPProxyPass != "" {
+		auth := fmt.Sprintf("%s:%s", proxyConfig.HTTPProxyUser, proxyConfig.HTTPProxyPass)
+		return fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(auth)))
+	}
+
+	// no credentials specified
+	return ""
 }
 
 // parseResponse parses the response from the HTTP request and returns the raw byte body.
