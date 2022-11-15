@@ -15,8 +15,8 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"go.sophtrust.dev/pkg/zerolog"
-	"go.sophtrust.dev/pkg/zerolog/log"
+	"go.sophtrust.dev/pkg/zerolog/v2"
+	"go.sophtrust.dev/pkg/zerolog/v2/log"
 )
 
 // PEMCipher is just an alias for int.

@@ -13,8 +13,8 @@ import (
 	neturl "net/url"
 
 	"go.sophtrust.dev/pkg/toolbox/crypto"
-	"go.sophtrust.dev/pkg/zerolog"
-	"go.sophtrust.dev/pkg/zerolog/log"
+	"go.sophtrust.dev/pkg/zerolog/v2"
+	"go.sophtrust.dev/pkg/zerolog/v2/log"
 )
 
 // Client represents an HTTP client.

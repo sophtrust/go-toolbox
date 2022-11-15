@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	ip2location "github.com/ip2location/ip2location-go/v9"
 	tbcontext "go.sophtrust.dev/pkg/toolbox/gin/context"
-	"go.sophtrust.dev/pkg/zerolog"
-	"go.sophtrust.dev/pkg/zerolog/log"
+	"go.sophtrust.dev/pkg/zerolog/v2"
+	"go.sophtrust.dev/pkg/zerolog/v2/log"
 )
 
 // IPAddressRecord holds detailed information about an IP address.

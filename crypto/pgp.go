@@ -5,8 +5,8 @@ import (
 	"errors"
 
 	pmailcrypto "github.com/ProtonMail/gopenpgp/v2/crypto"
-	"go.sophtrust.dev/pkg/zerolog"
-	"go.sophtrust.dev/pkg/zerolog/log"
+	"go.sophtrust.dev/pkg/zerolog/v2"
+	"go.sophtrust.dev/pkg/zerolog/v2/log"
 )
 
 // PGPKeyPair represents a PGP key pair.

@@ -9,8 +9,8 @@ import (
 	"encoding/base64"
 	"io"
 
-	"go.sophtrust.dev/pkg/zerolog"
-	"go.sophtrust.dev/pkg/zerolog/log"
+	"go.sophtrust.dev/pkg/zerolog/v2"
+	"go.sophtrust.dev/pkg/zerolog/v2/log"
 )
 
 // DecryptString decrypts the given block of ciphertext that was encrypted using the EncryptString() function.

@@ -9,8 +9,8 @@ import (
 	"crypto/x509"
 	"errors"
 
-	"go.sophtrust.dev/pkg/zerolog"
-	"go.sophtrust.dev/pkg/zerolog/log"
+	"go.sophtrust.dev/pkg/zerolog/v2"
+	"go.sophtrust.dev/pkg/zerolog/v2/log"
 )
 
 // ParsePublicKeyFromCertificate parses the RSA public key portion from an X509 certificate.

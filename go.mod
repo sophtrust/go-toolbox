@@ -14,10 +14,12 @@ require (
 	github.com/google/uuid v1.1.2
 	github.com/ip2location/ip2location-go/v9 v9.1.0
 	github.com/stretchr/testify v1.7.1-0.20210427113832-6241f9ab9942 // indirect
-	go.sophtrust.dev/pkg/zerolog v1.26.2
+	go.sophtrust.dev/pkg/zerolog/v2 v2.0.0
 	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d
 	golang.org/x/text v0.3.6
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.22.1
 	k8s.io/client-go v0.22.1
 )
+
+replace go.sophtrust.dev/pkg/zerolog/v2 => /Users/joshhogle/workspace/src/github.com/sophtrust/go-zerolog

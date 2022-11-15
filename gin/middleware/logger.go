@@ -10,8 +10,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.sophtrust.dev/pkg/toolbox/gin/context"
-	"go.sophtrust.dev/pkg/zerolog"
-	"go.sophtrust.dev/pkg/zerolog/log"
+	"go.sophtrust.dev/pkg/zerolog/v2"
+	"go.sophtrust.dev/pkg/zerolog/v2/log"
 )
 
 // Logger is a middleware function for logging requests to the server.

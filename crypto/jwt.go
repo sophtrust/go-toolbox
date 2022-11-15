@@ -6,8 +6,8 @@ import (
 	"crypto/rsa"
 
 	"github.com/golang-jwt/jwt/v4"
-	"go.sophtrust.dev/pkg/zerolog"
-	"go.sophtrust.dev/pkg/zerolog/log"
+	"go.sophtrust.dev/pkg/zerolog/v2"
+	"go.sophtrust.dev/pkg/zerolog/v2/log"
 )
 
 // JWTAuthService represents any object that is able to generate new JWT tokens and also validate them.

@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"go.sophtrust.dev/pkg/toolbox/crypto"
-	"go.sophtrust.dev/pkg/zerolog"
+	"go.sophtrust.dev/pkg/zerolog/v2"
 )
 
 const (
